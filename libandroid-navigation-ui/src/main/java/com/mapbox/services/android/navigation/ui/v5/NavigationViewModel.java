@@ -20,6 +20,7 @@ import com.mapbox.services.android.navigation.ui.v5.instruction.InstructionModel
 import com.mapbox.services.android.navigation.ui.v5.summary.SummaryModel;
 import com.mapbox.services.android.navigation.ui.v5.voice.InstructionPlayer;
 import com.mapbox.services.android.navigation.ui.v5.voice.NavigationInstructionPlayer;
+import com.mapbox.services.android.navigation.v5.milestone.BannerInstructionMilestone;
 import com.mapbox.services.android.navigation.v5.milestone.Milestone;
 import com.mapbox.services.android.navigation.v5.milestone.MilestoneEventListener;
 import com.mapbox.services.android.navigation.v5.milestone.VoiceInstructionMilestone;
@@ -122,6 +123,7 @@ public class NavigationViewModel extends AndroidViewModel implements LifecycleOb
     } else {
       instructionPlayer.play(instruction);
     }
+    updateBannerInstruction(routeProgress, milestone);
   }
 
   /**
@@ -284,6 +286,13 @@ public class NavigationViewModel extends AndroidViewModel implements LifecycleOb
   private void deactivateInstructionPlayer() {
     if (instructionPlayer != null) {
       instructionPlayer.onDestroy();
+    }
+  }
+
+  private void updateBannerInstruction(RouteProgress routeProgress, Milestone milestone) {
+    if (milestone instanceof BannerInstructionMilestone) {
+      instructionModel.setValue(new InstructionModel(routeProgress,
+        (BannerInstructionMilestone) milestone, decimalFormat, unitType));
     }
   }
 }
