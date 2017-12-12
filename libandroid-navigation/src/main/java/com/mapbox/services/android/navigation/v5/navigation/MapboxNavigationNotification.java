@@ -46,6 +46,12 @@ class MapboxNavigationNotification implements NavigationNotification {
   private String instructionText;
   private int currentManeuverId;
   private int distanceUnitType;
+  private BroadcastReceiver endNavigationBtnReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+      MapboxNavigationNotification.this.onEndNavigationBtnClick();
+    }
+  };
 
   MapboxNavigationNotification(Context context, MapboxNavigation mapboxNavigation) {
     this.mapboxNavigation = mapboxNavigation;
@@ -145,16 +151,18 @@ class MapboxNavigationNotification implements NavigationNotification {
   }
 
   private void updateInstructionText(LegStep step) {
-    if (instructionText == null || newInstructionText(step)) {
+    if (hasInstructions(step) && (instructionText == null || newInstructionText(step))) {
       instructionText = step.bannerInstructions().get(0).primary().text();
       notificationRemoteViews.setTextViewText(R.id.notificationInstructionText, instructionText);
     }
   }
 
+  private boolean hasInstructions(LegStep step) {
+    return step.bannerInstructions() != null && !step.bannerInstructions().isEmpty();
+  }
+
   private boolean newInstructionText(LegStep step) {
-    return step.bannerInstructions() != null
-      && !step.bannerInstructions().isEmpty()
-      && !instructionText.equals(step.bannerInstructions().get(0).primary().text());
+    return !instructionText.equals(step.bannerInstructions().get(0).primary().text());
   }
 
   private void updateDistanceText(RouteProgress routeProgress) {
@@ -208,11 +216,4 @@ class MapboxNavigationNotification implements NavigationNotification {
       mapboxNavigation.endNavigation();
     }
   }
-
-  private BroadcastReceiver endNavigationBtnReceiver = new BroadcastReceiver() {
-    @Override
-    public void onReceive(final Context context, final Intent intent) {
-      MapboxNavigationNotification.this.onEndNavigationBtnClick();
-    }
-  };
 }
