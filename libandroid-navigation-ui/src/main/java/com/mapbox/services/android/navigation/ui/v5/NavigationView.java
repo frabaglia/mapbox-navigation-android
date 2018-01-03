@@ -401,7 +401,7 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    * route.
    */
   private void initRoute() {
-    int routeStyleRes = ThemeSwitcher.retrieveNavigationViewRouteStyle(getContext());
+    int routeStyleRes = ThemeSwitcher.retrieveNavigationViewStyle(getContext(), R.attr.navigationViewRouteStyle);
     mapRoute = new NavigationMapRoute(null, mapView, map, routeStyleRes);
   }
 
@@ -436,7 +436,9 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    */
   @SuppressWarnings( {"MissingPermission"})
   private void initLocationLayer() {
-    locationLayer = new LocationLayerPlugin(mapView, map, null);
+    int locationLayerStyleRes = ThemeSwitcher.retrieveNavigationViewStyle(getContext(),
+      R.attr.navigationViewLocationLayerStyle);
+    locationLayer = new LocationLayerPlugin(mapView, map, null, locationLayerStyleRes);
     locationLayer.setLocationLayerEnabled(LocationLayerMode.NAVIGATION);
   }
 
